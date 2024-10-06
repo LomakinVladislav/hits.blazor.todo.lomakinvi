@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using ToDoServerApp.Components;
 using ToDoServerApp.Components.Account;
 using ToDoServerApp.Data;
+using ToDoServerApp.Data.Interfaces;
+using ToDoServerApp.Data.Services;
 
 namespace ToDoServerApp
 {
@@ -40,6 +42,7 @@ namespace ToDoServerApp
                 .AddDefaultTokenProviders();
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+            builder.Services.AddScoped<IDataService, MemoryDataService>();
 
             var app = builder.Build();
 
