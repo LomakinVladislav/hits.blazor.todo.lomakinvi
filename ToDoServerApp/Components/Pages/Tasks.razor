@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @inject IDataService data
 @attribute [Authorize]
+@inject NavigationManager navigate
 
 <PageTitle>Задачи</PageTitle>
 
@@ -16,16 +17,23 @@
     }
     else
     {
+        <div class="btn-group m-2">
+            <button class="btn btn-primary" @onclick="AddTask">Новая задача</button>
+        </div>
         <div class="card-group">
             @foreach (var task in tasks)
                 {
-                <div class="card">
-                    <div class="card-header">
+                <div class="card" >
+                    <div class="card-header" >
                         @task.Title
                     </div>
                     <div class="card-body">
                         <p>@task.Description</p>
                         <p>@task.CreateDate</p>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-primary" href="tasks/@task.Id">Изменить</a>
+                        <button class="btn btn-primary" @onclick="async () => await DeleteTask(task.Id)">Удалить</button>
                     </div>
                 </div>
             }
@@ -37,10 +45,20 @@
 {
     IEnumerable<TaskItem>? tasks;
 
-protected override async Task OnInitializedAsync()
-{
-    await base.OnInitializedAsync();
-    tasks = await data.GetTaskItemsAsync();
-}
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        tasks = await data.GetAllAsync();
+    }
 
+    void AddTask()
+    {
+        navigate.NavigateTo("tasks/add");
+    }
+
+    async Task DeleteTask(int id)
+    {
+        await data.DeleteAsync(id);
+        tasks = await data.GetAllAsync();
+    }
 }
